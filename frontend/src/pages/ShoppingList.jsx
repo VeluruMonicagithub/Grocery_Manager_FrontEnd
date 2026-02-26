@@ -16,6 +16,7 @@ const ShoppingList = () => {
     const [coupons, setCoupons] = useState([]);
     const [itemPrices, setItemPrices] = useState({}); // Track estimated prices per item ID
     const [estimatingItems, setEstimatingItems] = useState({});
+    const [showAllChecked, setShowAllChecked] = useState(false);
 
     const fetchItems = async () => {
         try {
@@ -127,11 +128,26 @@ const ShoppingList = () => {
         }
     };
 
+    const getApplicableCoupon = (itemName) => {
+        if (!itemName) return null;
+        return coupons.find(c => itemName.toLowerCase().includes((c.grocery_item_name || "").toLowerCase()));
+    };
+
+    const getDiscountedPrice = (item) => {
+        const basePrice = Number(item.price) || 0;
+        const coupon = getApplicableCoupon(item.name);
+        if (coupon && coupon.discount_percentage) {
+            return basePrice - (basePrice * (Number(coupon.discount_percentage) / 100));
+        }
+        return basePrice;
+    };
+
     const completedItems = items.filter((i) => i.is_checked);
     const completed = completedItems.length;
+    const visibleCompleted = showAllChecked ? completedItems : completedItems.slice(0, 10);
 
     // Budget-based progress
-    const currentTotal = completedItems.reduce((acc, current) => acc + (Number(current.price) || 0), 0);
+    const currentTotal = completedItems.reduce((acc, current) => acc + getDiscountedPrice(current), 0);
     let progress = 0;
     if (budget > 0) {
         progress = (currentTotal / budget) * 100;
@@ -147,9 +163,9 @@ const ShoppingList = () => {
             return;
         }
 
-        // Calculate a rough estimated total based on prices in the database
-        const estimatedTotal = completedItems.reduce((acc, current) => acc + (Number(current.price) || 0), 0);
-        const totalEstimatedAll = items.reduce((acc, current) => acc + (Number(current.price) || 0), 0);
+        // Calculate a rough estimated total based on prices in the database with discounts
+        const estimatedTotal = completedItems.reduce((acc, current) => acc + getDiscountedPrice(current), 0);
+        const totalEstimatedAll = items.reduce((acc, current) => acc + getDiscountedPrice(current), 0);
 
         try {
             // Assume we are using the first list_id available, since we haven't implemented multi-list selection yet
@@ -202,7 +218,7 @@ const ShoppingList = () => {
         return acc;
     }, {});
 
-    const totalEstimatedAll = items.reduce((acc, current) => acc + (Number(current.price) || 0), 0);
+    const totalEstimatedAll = items.reduce((acc, current) => acc + getDiscountedPrice(current), 0);
 
     return (
         <DashboardLayout>
@@ -256,7 +272,7 @@ const ShoppingList = () => {
                             <div>
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Curr. Total</p>
                                 <p className="text-lg font-black text-gray-800">
-                                    ₹{completedItems.reduce((acc, current) => acc + (Number(current.price) || 0), 0).toFixed(2)}
+                                    ₹{completedItems.reduce((acc, current) => acc + getDiscountedPrice(current), 0).toFixed(2)}
                                 </p>
                             </div>
                             <div className="text-right">
@@ -290,8 +306,8 @@ const ShoppingList = () => {
                                 <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
                                     {coupons.map(c => (
                                         <div key={c.id} className="flex-shrink-0 bg-white px-3 py-2 rounded-lg border border-green-100 shadow-sm min-w-[140px]">
-                                            <p className="text-[11px] font-bold text-gray-800 line-clamp-1">{c.store_name}</p>
-                                            <p className="text-[13px] font-black text-green-600 tracking-tight">{c.discount_details}</p>
+                                            <p className="text-[11px] font-bold text-gray-800 line-clamp-1">{c.grocery_item_name} Deal</p>
+                                            <p className="text-[13px] font-black text-green-600 tracking-tight">{c.discount_percentage}% OFF</p>
                                         </div>
                                     ))}
                                 </div>
@@ -414,14 +430,22 @@ const ShoppingList = () => {
                                                             <p className="font-bold text-[17px] tracking-tight text-gray-900">
                                                                 {item.name}
                                                             </p>
-                                                            {item.coupon && (
+                                                            {getApplicableCoupon(item.name) && (
                                                                 <span className="bg-[#E8F5E9] text-[#2E7D32] text-[10px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider">
-                                                                    Coupon
+                                                                    {getApplicableCoupon(item.name).discount_percentage}% OFF
                                                                 </span>
                                                             )}
                                                         </div>
                                                         <p className="text-[13px] font-medium text-gray-500">
-                                                            {item.quantity} {item.unit || 'Unit'} <span className="mx-1.5 text-gray-300">•</span> ~₹{item.price || '0.00'}
+                                                            {item.quantity} {item.unit || 'Unit'} <span className="mx-1.5 text-gray-300">•</span>
+                                                            {getApplicableCoupon(item.name) && item.price ? (
+                                                                <>
+                                                                    <span className="line-through text-gray-300">₹{item.price || '0.00'}</span>{" "}
+                                                                    <span className="text-green-600 font-bold">₹{getDiscountedPrice(item).toFixed(2)}</span>
+                                                                </>
+                                                            ) : (
+                                                                `~₹${item.price || '0.00'}`
+                                                            )}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -440,20 +464,23 @@ const ShoppingList = () => {
                         {/* Completed/Eliminated Items Section at the very bottom */}
                         {completed > 0 && (
                             <div className="mt-10 pt-4 border-t border-gray-100">
-                                <div className="flex justify-between items-end mb-3 px-1">
-                                    <h2 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+                                <div className="flex justify-between items-end mb-4 px-1">
+                                    <h2 className="text-[14px] font-bold text-gray-400 uppercase tracking-widest hidden sm:block">
                                         Checked Items ({completed})
                                     </h2>
                                     <button
                                         onClick={finishShoppingTrip}
-                                        className="text-[10px] font-black tracking-wide bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1.5 rounded-full uppercase transition-colors flex items-center gap-1"
+                                        className="w-full sm:w-auto text-[14px] font-black tracking-wide bg-green-500 text-white shadow-lg shadow-green-200 hover:bg-green-600 px-6 py-3 rounded-xl uppercase transition-all flex items-center justify-center gap-2"
                                     >
-                                        <CheckCircle className="w-3 h-3" strokeWidth={3} />
-                                        Log Trip
+                                        <CheckCircle className="w-5 h-5" strokeWidth={3} />
+                                        Log Trip & Restock Pantry
                                     </button>
                                 </div>
+                                <h2 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest sm:hidden mb-3 px-1">
+                                    Checked Items ({completed})
+                                </h2>
                                 <div className="space-y-1 opacity-60">
-                                    {items.filter(i => i.is_checked).map(item => (
+                                    {visibleCompleted.map(item => (
                                         <div key={item.id} className="flex items-center gap-4 py-2 px-1">
                                             <div onClick={() => toggleItem(item)} className="w-[26px] h-[26px] flex-shrink-0 rounded-[8px] bg-green-500 border-2 border-green-500 flex items-center justify-center cursor-pointer transition-transform hover:scale-95">
                                                 <Check className="w-4 h-4 text-white" strokeWidth={3.5} />
@@ -462,6 +489,16 @@ const ShoppingList = () => {
                                         </div>
                                     ))}
                                 </div>
+                                {completed > 10 && (
+                                    <div className="flex justify-center mt-4">
+                                        <button
+                                            onClick={() => setShowAllChecked(!showAllChecked)}
+                                            className="text-[12px] font-bold text-green-600 bg-green-50 hover:bg-green-100 px-4 py-2 rounded-lg transition-colors"
+                                        >
+                                            {showAllChecked ? "Show Less" : `View ${completed - 10} More Items`}
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

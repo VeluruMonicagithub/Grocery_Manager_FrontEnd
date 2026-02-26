@@ -172,10 +172,13 @@ const ProfileAccount = () => {
 
                         {/* System Preferences */}
                         <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden mt-6">
-                            <div className="p-4 border-b border-gray-50 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
+                            <div
+                                className="p-4 border-b border-gray-50 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
+                                onClick={() => navigate("/analytics")}
+                            >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center text-orange-500"><Utensils className="w-4 h-4" /></div>
-                                    <span className="text-sm font-bold text-gray-700">Meal Plan Schedules</span>
+                                    <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500"><PieChart className="w-4 h-4" /></div>
+                                    <span className="text-sm font-bold text-gray-700">Analytics</span>
                                 </div>
                                 <ChevronRight className="w-4 h-4 text-gray-400" />
                             </div>

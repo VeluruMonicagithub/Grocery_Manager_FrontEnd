@@ -2,7 +2,7 @@ import axios from "axios";
 import { supabase } from "./supabase";
 
 const API = axios.create({
-    baseURL: "http://localhost:5000/api",
+    baseURL: "http://localhost:5001/api",
 });
 
 // Attach token automatically

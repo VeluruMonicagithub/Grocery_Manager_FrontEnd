@@ -10,6 +10,7 @@ import Recipes from "./pages/Recipes";
 import ProfileAccount from "./pages/ProfileAccount";
 import SharingHub from "./pages/SharingHub";
 import SharedAccess from "./pages/SharedAccess";
+import Analytics from "./pages/Analytics";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/recipes" element={<ProtectedRoute><Recipes /></ProtectedRoute>} />
           <Route path="/members" element={<ProtectedRoute><SharingHub /></ProtectedRoute>} />
           <Route path="/account" element={<ProtectedRoute><ProfileAccount /></ProtectedRoute>} />
+          <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
       <ToastContainer position="top-right" autoClose={3000} />

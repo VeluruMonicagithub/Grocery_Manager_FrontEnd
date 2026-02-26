@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { BookOpen, Search, Flame, Tag, Plus, Check } from "lucide-react";
+import { BookOpen, Search, Flame, Tag, Plus, Check, User } from "lucide-react";
 import API from "@/services/api";
 
 const Recipes = () => {
@@ -11,17 +11,31 @@ const Recipes = () => {
     const [dietFilter, setDietFilter] = useState("All"); // All, Veg, NonVeg
     const [searchQuery, setSearchQuery] = useState("");
     const [isMatching, setIsMatching] = useState(false);
+    const [selectedTag, setSelectedTag] = useState("All");
+    const [userPreferences, setUserPreferences] = useState([]);
+    const [matchMyDiet, setMatchMyDiet] = useState(false);
+    const [pantryItems, setPantryItems] = useState([]);
 
-    const fetchRecipes = async () => {
+    const fetchData = async () => {
         try {
-            const res = await API.get("/recipes");
-            setRecipes(res.data);
+            const [recipesRes, profileRes, pantryRes] = await Promise.all([
+                API.get("/recipes"),
+                API.get("/profile"),
+                API.get("/pantry")
+            ]);
+            setRecipes(recipesRes.data);
+            if (profileRes.data && profileRes.data.dietary_preferences) {
+                setUserPreferences(profileRes.data.dietary_preferences);
+            }
+            setPantryItems(pantryRes.data || []);
         } catch (err) {
-            console.error("Error fetching recipes:", err);
+            console.error("Error fetching data:", err);
         } finally {
             setLoading(false);
         }
     };
+
+
 
     const handlePantryMatch = async () => {
         setIsMatching(true);
@@ -58,8 +72,52 @@ const Recipes = () => {
         }
     };
 
+    const handleSmartAddToList = async (recipeId) => {
+        const details = recipeDetails[recipeId];
+        if (!details || !details.ingredients) return;
+
+        const pantryNames = pantryItems.map(p => p.name.toLowerCase().trim());
+        const missingIngredients = [];
+
+        details.ingredients.forEach(ing => {
+            const reqName = ing.ingredient_name.toLowerCase().trim();
+            // Same flexible matching as Matcher
+            const hasIngredient = pantryNames.some(pantryName =>
+                pantryName.includes(reqName) || reqName.includes(pantryName)
+            );
+
+            if (!hasIngredient) {
+                missingIngredients.push(ing);
+            }
+        });
+
+        if (missingIngredients.length === 0) {
+            alert("Awesome! You already have all the ingredients in your pantry for this recipe.");
+            return;
+        }
+
+        try {
+            // Add missing ingredients to Grocery List
+            await Promise.all(missingIngredients.map(ing =>
+                API.post("/grocery", {
+                    name: ing.ingredient_name,
+                    quantity: ing.quantity || 1,
+                    unit: ing.unit || "Unit",
+                    price: 0,
+                    coupon: false,
+                    section: "Others",
+                    notes: `From Recipe: ${details.title}`
+                })
+            ));
+            alert(`Successfully added ${missingIngredients.length} missing ingredients to your Shopping List!`);
+        } catch (err) {
+            console.error("Failed to add to list:", err);
+            alert("Failed to add ingredients to shopping list.");
+        }
+    };
+
     useEffect(() => {
-        fetchRecipes();
+        fetchData();
     }, []);
 
     return (
@@ -132,9 +190,21 @@ const Recipes = () => {
                 </div>
 
                 {/* Categories / Tags Pill Row */}
-                <div className="flex gap-3 overflow-x-auto pb-4 hide-scrollbar -mx-6 px-6 mb-4">
-                    {["All", "Low-Carb", "High Protein", "Vegetarian", "Quick Meals", "Budget"].map((tag, i) => (
-                        <button key={tag} className={`flex-shrink-0 px-4 py-1.5 rounded-full text-[12px] font-bold transition-colors ${i === 0 ? "bg-green-600 text-white shadow-md shadow-green-200" : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"}`}>
+                <div className="flex gap-3 overflow-x-auto pb-4 hide-scrollbar -mx-6 px-6 mb-4 items-center">
+                    {userPreferences.length > 0 && (
+                        <button
+                            onClick={() => setMatchMyDiet(!matchMyDiet)}
+                            className={`flex-shrink-0 px-4 py-1.5 rounded-full text-[12px] font-bold transition-all flex items-center gap-1.5 ${matchMyDiet ? "bg-purple-600 text-white shadow-md shadow-purple-200" : "bg-purple-50 text-purple-600 border border-purple-200 hover:bg-purple-100"}`}
+                        >
+                            <User className="w-3.5 h-3.5" /> Match My Diet
+                        </button>
+                    )}
+                    {["All", "Low-Carb", "High Protein", "Vegetarian", "Vegan", "Gluten-Free", "Quick Meals", "Budget"].map((tag) => (
+                        <button
+                            key={tag}
+                            onClick={() => setSelectedTag(tag)}
+                            className={`flex-shrink-0 px-4 py-1.5 rounded-full text-[12px] font-bold transition-colors ${selectedTag === tag ? "bg-green-600 text-white shadow-md shadow-green-200" : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"}`}
+                        >
                             {tag}
                         </button>
                     ))}
@@ -155,14 +225,28 @@ const Recipes = () => {
                                 (r.description || "").toLowerCase().includes(searchQuery.toLowerCase());
                             if (!matchesSearch) return false;
 
-                            // Diet Filter
-                            if (dietFilter === "All") return true;
+                            // Diet Filter (Veg/NonVeg toggle)
                             const isVeg = r.dietary_tags && r.dietary_tags.includes("Vegetarian");
-                            if (dietFilter === "Veg") return isVeg;
-                            if (dietFilter === "NonVeg") return !isVeg;
+                            if (dietFilter === "Veg" && !isVeg) return false;
+                            if (dietFilter === "NonVeg" && isVeg) return false;
+
+                            // Selected Tag Filter
+                            if (selectedTag !== "All") {
+                                if (!r.dietary_tags || !r.dietary_tags.includes(selectedTag)) return false;
+                            }
+
+                            // Match My Diet (User Preferences)
+                            if (matchMyDiet && userPreferences.length > 0) {
+                                // Lenient matching: Recipe should partially match ANY of the user preferences
+                                // We check dietary tags, title, and description for maximum leniency
+                                const recipeText = `${(r.dietary_tags || []).join(" ")} ${r.title} ${r.description || ""}`.toLowerCase();
+                                const matchesRegimen = userPreferences.some(pref => recipeText.includes(pref.toLowerCase().trim()));
+                                if (!matchesRegimen) return false;
+                            }
 
                             return true;
                         }).map((recipe) => {
+                            // New format may not use |||IMAGE: hack, safely fallback
                             const descParts = (recipe.description || "").split("|||IMAGE:");
                             const cleanDesc = descParts[0];
                             const imageUrl = descParts[1] || null;
@@ -246,7 +330,7 @@ const Recipes = () => {
                                             ) : (
                                                 <div className="space-y-2 mb-6">
                                                     {(recipeDetails[recipe.id]?.ingredients || []).map((ing, idx) => (
-                                                        <div key={ing.id || idx} className="flex justify-between items-center bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
+                                                        <div key={idx} className="flex justify-between items-center bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
                                                             <span className="text-[13px] font-semibold text-gray-700">{ing.ingredient_name}</span>
                                                             <span className="text-[11px] font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-md">
                                                                 {ing.quantity} {ing.unit}
@@ -257,12 +341,12 @@ const Recipes = () => {
                                             )}
 
                                             {/* Call to Actions */}
-                                            <div className="flex gap-3">
-                                                <button className="flex-1 bg-[#4CAF50] hover:bg-[#45a049] text-white text-[13px] font-bold py-3 rounded-xl shadow-lg shadow-green-200 transition-all flex items-center justify-center gap-2">
-                                                    <Plus className="w-4 h-4" strokeWidth={3} /> Add to List
-                                                </button>
-                                                <button className="bg-white border-2 border-green-500 text-green-600 hover:bg-green-50 text-[13px] font-bold py-3 px-4 rounded-xl transition-all">
-                                                    Plan Meal
+                                            <div className="flex gap-3 mt-4">
+                                                <button
+                                                    onClick={() => handleSmartAddToList(recipe.id)}
+                                                    className="flex-1 bg-[#4CAF50] hover:bg-[#45a049] text-white text-[13px] font-bold py-3 rounded-xl shadow-lg shadow-green-200 transition-all flex items-center justify-center gap-2"
+                                                >
+                                                    <Plus className="w-4 h-4" strokeWidth={3} /> Add Missing Ingredients to Shopping List
                                                 </button>
                                             </div>
                                         </div>

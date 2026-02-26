@@ -15,26 +15,8 @@ const QuickAddModal = ({ open, onClose, onSuccess }) => {
     const [quantity, setQuantity] = useState("");
     const [unit, setUnit] = useState("");
     const [threshold, setThreshold] = useState("");
-    const [price, setPrice] = useState("");
-    const [isEstimating, setIsEstimating] = useState(false);
 
     if (!open) return null;
-
-    const handleNameBlur = async () => {
-        if (!name.trim() || price) return;
-
-        setIsEstimating(true);
-        try {
-            const res = await API.post("/ai/estimate-price", { itemName: name });
-            if (res.data && res.data.price) {
-                setPrice(res.data.price);
-            }
-        } catch (err) {
-            console.error("Failed to estimate price", err);
-        } finally {
-            setIsEstimating(false);
-        }
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -45,7 +27,7 @@ const QuickAddModal = ({ open, onClose, onSuccess }) => {
                 quantity: Number(quantity),
                 unit,
                 threshold: Number(threshold),
-                price: Number(price) || 0,
+                price: 0, // Default to 0 since input was removed
             });
 
             // reset form
@@ -53,7 +35,6 @@ const QuickAddModal = ({ open, onClose, onSuccess }) => {
             setQuantity("");
             setUnit("");
             setThreshold("");
-            setPrice("");
 
             onSuccess();
             onClose();
@@ -75,7 +56,6 @@ const QuickAddModal = ({ open, onClose, onSuccess }) => {
                         className="w-full p-2 border rounded"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        onBlur={handleNameBlur}
                         required
                     />
 
@@ -107,17 +87,6 @@ const QuickAddModal = ({ open, onClose, onSuccess }) => {
                             onChange={(e) => setThreshold(e.target.value)}
                             required
                         />
-                        <div className="relative w-full">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
-                            <input
-                                placeholder={isEstimating ? "Estimating..." : "Est. Price"}
-                                type="number"
-                                className={`w-full pl-8 py-2 pr-2 border rounded ${isEstimating ? 'animate-pulse bg-gray-50' : ''}`}
-                                value={price}
-                                onChange={(e) => setPrice(e.target.value)}
-                                disabled={isEstimating}
-                            />
-                        </div>
                     </div>
 
                     <div className="flex justify-between">
