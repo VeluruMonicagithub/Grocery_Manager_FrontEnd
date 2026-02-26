@@ -15,6 +15,7 @@ const QuickAddModal = ({ open, onClose, onSuccess }) => {
     const [quantity, setQuantity] = useState("");
     const [unit, setUnit] = useState("");
     const [threshold, setThreshold] = useState("");
+    const [expirationDate, setExpirationDate] = useState("");
 
     if (!open) return null;
 
@@ -27,6 +28,7 @@ const QuickAddModal = ({ open, onClose, onSuccess }) => {
                 quantity: Number(quantity),
                 unit,
                 threshold: Number(threshold),
+                expiration_date: expirationDate || null,
                 price: 0, // Default to 0 since input was removed
             });
 
@@ -35,6 +37,7 @@ const QuickAddModal = ({ open, onClose, onSuccess }) => {
             setQuantity("");
             setUnit("");
             setThreshold("");
+            setExpirationDate("");
 
             onSuccess();
             onClose();
@@ -75,6 +78,16 @@ const QuickAddModal = ({ open, onClose, onSuccess }) => {
                             value={unit}
                             onChange={(e) => setUnit(e.target.value)}
                             required
+                        />
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="text-xs font-semibold text-gray-500 ml-1">Expiration Date (Optional)</label>
+                        <input
+                            type="date"
+                            className="w-full p-2 border rounded"
+                            value={expirationDate}
+                            onChange={(e) => setExpirationDate(e.target.value)}
                         />
                     </div>
 

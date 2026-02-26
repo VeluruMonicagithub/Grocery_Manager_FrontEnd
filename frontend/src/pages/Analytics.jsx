@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Calendar, Wallet, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Calendar, Wallet, CheckCircle2, Flame } from "lucide-react";
 import API from "@/services/api";
 
 const Analytics = () => {
@@ -10,7 +10,8 @@ const Analytics = () => {
     const [data, setData] = useState({
         goal: 500,
         spent: 0,
-        categories: []
+        categories: [],
+        nutrition: { calories: 0, protein: 0, carbs: 0, fat: 0 }
     });
 
     useEffect(() => {
@@ -204,6 +205,78 @@ const Analytics = () => {
                                 </div>
                             </div>
                             {/* End right column */}
+                        </div>
+
+                        {/* Nutrition Summary Section */}
+                        <div className="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 mt-10">
+                            <div className="flex items-center gap-3 mb-8">
+                                <div className="p-2 bg-orange-50 rounded-lg">
+                                    <Flame className="w-6 h-6 text-orange-500" />
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-800">Nutritional Intake</h3>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                {/* Calories */}
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-sm font-bold">
+                                        <span className="text-gray-500 uppercase tracking-wider">Calories</span>
+                                        <span className="text-orange-600">{Math.round(data.nutrition?.calories || 0)} / 2000 kcal</span>
+                                    </div>
+                                    <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-orange-400 rounded-full transition-all duration-1000"
+                                            style={{ width: `${Math.min(100, (data.nutrition?.calories || 0) / 2000 * 100)}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                {/* Protein */}
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-sm font-bold">
+                                        <span className="text-gray-500 uppercase tracking-wider">Protein</span>
+                                        <span className="text-blue-600">{Math.round(data.nutrition?.protein || 0)} / 50g</span>
+                                    </div>
+                                    <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-blue-400 rounded-full transition-all duration-1000"
+                                            style={{ width: `${Math.min(100, (data.nutrition?.protein || 0) / 50 * 100)}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                {/* Carbs */}
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-sm font-bold">
+                                        <span className="text-gray-500 uppercase tracking-wider">Carbs</span>
+                                        <span className="text-purple-600">{Math.round(data.nutrition?.carbs || 0)} / 250g</span>
+                                    </div>
+                                    <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-purple-400 rounded-full transition-all duration-1000"
+                                            style={{ width: `${Math.min(100, (data.nutrition?.carbs || 0) / 250 * 100)}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                {/* Fat */}
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-sm font-bold">
+                                        <span className="text-gray-500 uppercase tracking-wider">Fat</span>
+                                        <span className="text-yellow-600">{Math.round(data.nutrition?.fat || 0)} / 70g</span>
+                                    </div>
+                                    <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-yellow-400 rounded-full transition-all duration-1000"
+                                            style={{ width: `${Math.min(100, (data.nutrition?.fat || 0) / 70 * 100)}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p className="text-[10px] text-gray-400 mt-6 font-medium italic">
+                                * Intake is estimated based on both grocery purchases and prepared recipes. Suggested daily goals are based on a standard 2000 kcal diet.
+                            </p>
                         </div>
                     </>
                 )}
