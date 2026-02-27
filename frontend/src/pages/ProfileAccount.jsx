@@ -57,7 +57,7 @@ const ProfileAccount = () => {
     return (
         <DashboardLayout>
             {/* Header Area matches ShoppingList style */}
-            <div className="bg-[#F3F7F4] min-h-screen -mx-6 px-6 pt-6 pb-32">
+            <div className="bg-[#F3F7F4] dark:bg-slate-950 min-h-screen -mx-6 px-6 pt-6 pb-32 transition-colors duration-300">
                 {/* Header Removed */}
 
                 {loading ? (
@@ -66,15 +66,15 @@ const ProfileAccount = () => {
                     <div className="space-y-6">
 
                         {/* Profile Card */}
-                        <div className="bg-white p-5 rounded-[24px] shadow-sm border border-gray-100">
+                        <div className="bg-white dark:bg-slate-900 p-5 rounded-[24px] shadow-sm border border-gray-100 dark:border-slate-800">
                             <div className="flex justify-between items-start mb-4">
-                                <h2 className="text-[14px] font-bold text-gray-800 flex items-center gap-2">
+                                <h2 className="text-[14px] font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                                     <Heart className="w-4 h-4 text-green-500" />
                                     Personal Details
                                 </h2>
                                 <button
                                     onClick={() => editing ? handleSaveProfile() : setEditing(true)}
-                                    className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-lg hover:bg-green-100 transition-colors"
+                                    className="text-xs font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/40 px-3 py-1.5 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/60 transition-colors"
                                 >
                                     {editing ? "Save" : "Edit"}
                                 </button>
@@ -82,37 +82,37 @@ const ProfileAccount = () => {
 
                             <div className="space-y-4 text-sm">
                                 <div>
-                                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1">Full Name</p>
+                                    <p className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Full Name</p>
                                     {editing ? (
                                         <input
                                             value={nameInput}
                                             onChange={e => setNameInput(e.target.value)}
-                                            className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 focus:ring-2 focus:ring-green-100 outline-none"
+                                            className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-gray-200 rounded-lg p-2 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 outline-none"
                                             placeholder="E.g., Monica"
                                         />
                                     ) : (
-                                        <p className="font-medium text-gray-800">{profile?.full_name || "Not set"}</p>
+                                        <p className="font-medium text-gray-800 dark:text-gray-200">{profile?.full_name || "Not set"}</p>
                                     )}
                                 </div>
                                 <div>
-                                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1">Dietary Preferences</p>
+                                    <p className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Dietary Preferences</p>
                                     {editing ? (
                                         <input
                                             value={preferencesInput}
                                             onChange={e => setPreferencesInput(e.target.value)}
-                                            className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 focus:ring-2 focus:ring-green-100 outline-none"
+                                            className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-gray-200 rounded-lg p-2 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 outline-none"
                                             placeholder="E.g., Vegetarian, Gluten-Free"
                                         />
                                     ) : (
                                         <div className="flex flex-wrap gap-2 mt-1.5">
                                             {profile?.dietary_preferences?.length > 0 ? (
                                                 profile.dietary_preferences.map(pref => (
-                                                    <span key={pref} className="bg-gray-100 text-gray-600 text-[11px] font-bold px-2 py-1 rounded-md">
+                                                    <span key={pref} className="bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400 text-[11px] font-bold px-2 py-1 rounded-md">
                                                         {pref}
                                                     </span>
                                                 ))
                                             ) : (
-                                                <p className="font-medium text-gray-400 italic">None specified</p>
+                                                <p className="font-medium text-gray-400 dark:text-gray-500 italic">None specified</p>
                                             )}
                                         </div>
                                     )}
@@ -121,47 +121,47 @@ const ProfileAccount = () => {
                         </div>
 
                         {/* Shopping Analytics/History */}
-                        <div className="bg-white p-5 rounded-[24px] shadow-sm border border-gray-100">
-                            <h2 className="text-[14px] font-bold text-gray-800 flex items-center gap-2 mb-4">
+                        <div className="bg-white dark:bg-slate-900 p-5 rounded-[24px] shadow-sm border border-gray-100 dark:border-slate-800">
+                            <h2 className="text-[14px] font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2 mb-4">
                                 <PieChart className="w-4 h-4 text-green-500" />
                                 Shopping Summary
                             </h2>
 
                             <div className="grid grid-cols-2 gap-3 mb-6">
-                                <div className="bg-green-50/50 p-4 rounded-xl border border-green-100/50 flex flex-col items-center justify-center">
-                                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1">Total Trips</span>
-                                    <span className="text-2xl font-black text-green-600">{history.length}</span>
+                                <div className="bg-green-50/50 dark:bg-green-950/20 p-4 rounded-xl border border-green-100/50 dark:border-green-900/30 flex flex-col items-center justify-center">
+                                    <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Total Trips</span>
+                                    <span className="text-2xl font-black text-green-600 dark:text-green-400">{history.length}</span>
                                 </div>
-                                <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100/50 flex flex-col items-center justify-center">
-                                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1">Total Spent</span>
-                                    <span className="text-2xl font-black text-blue-600">
+                                <div className="bg-blue-50/50 dark:bg-blue-950/20 p-4 rounded-xl border border-blue-100/50 dark:border-blue-900/30 flex flex-col items-center justify-center">
+                                    <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Total Spent</span>
+                                    <span className="text-2xl font-black text-blue-600 dark:text-blue-400">
                                         ₹{history.reduce((sum, h) => sum + (Number(h.total_spent) || 0), 0)}
                                     </span>
                                 </div>
                             </div>
 
-                            <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">Recent Trips</h3>
+                            <h3 className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Recent Trips</h3>
                             {history.length === 0 ? (
-                                <p className="text-sm text-gray-400 italic text-center py-4 bg-gray-50 rounded-xl">No shopping history yet.</p>
+                                <p className="text-sm text-gray-400 dark:text-gray-500 italic text-center py-4 bg-gray-50 dark:bg-slate-800 rounded-xl">No shopping history yet.</p>
                             ) : (
                                 <div className="space-y-3">
                                     {history.slice(0, 5).map(trip => (
-                                        <div key={trip.id} className="flex justify-between items-center p-3 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-gray-100">
+                                        <div key={trip.id} className="flex justify-between items-center p-3 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-gray-100 dark:hover:border-slate-700">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                                                    <Clock className="w-4 h-4 text-gray-500" />
+                                                <div className="w-10 h-10 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                                                    <Clock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-bold text-gray-800">
+                                                    <p className="text-sm font-bold text-gray-800 dark:text-gray-200">
                                                         {new Date(trip.purchased_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
                                                     </p>
-                                                    <p className="text-xs font-medium text-gray-500">
+                                                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
                                                         {trip.grocery_lists?.title || "Grocery Trip"}
                                                     </p>
                                                 </div>
                                             </div>
                                             <div className="text-right flex items-center gap-2 text-gray-400">
-                                                <span className="text-sm font-bold text-gray-800">₹{trip.total_spent || '0.00'}</span>
+                                                <span className="text-sm font-bold text-gray-800 dark:text-gray-200">₹{trip.total_spent || '0.00'}</span>
                                                 <ChevronRight className="w-4 h-4" />
                                             </div>
                                         </div>
@@ -171,14 +171,14 @@ const ProfileAccount = () => {
                         </div>
 
                         {/* System Preferences */}
-                        <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden mt-6">
+                        <div className="bg-white dark:bg-slate-900 rounded-[24px] shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden mt-6">
                             <div
-                                className="p-4 border-b border-gray-50 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
+                                className="p-4 border-b border-gray-50 dark:border-slate-800 flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
                                 onClick={() => navigate("/analytics")}
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500"><PieChart className="w-4 h-4" /></div>
-                                    <span className="text-sm font-bold text-gray-700">Analytics</span>
+                                    <div className="w-8 h-8 bg-blue-50 dark:bg-blue-950/40 rounded-lg flex items-center justify-center text-blue-500 dark:text-blue-400"><PieChart className="w-4 h-4" /></div>
+                                    <span className="text-sm font-bold text-gray-700 dark:text-gray-200">Analytics</span>
                                 </div>
                                 <ChevronRight className="w-4 h-4 text-gray-400" />
                             </div>
@@ -189,11 +189,11 @@ const ProfileAccount = () => {
                                     await logout();
                                     navigate("/login");
                                 }}
-                                className="p-4 flex items-center justify-between cursor-pointer hover:bg-red-50 transition-colors group"
+                                className="p-4 flex items-center justify-between cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors group"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 bg-red-50 group-hover:bg-red-100 rounded-lg flex items-center justify-center text-red-500 transition-colors"><LogOut className="w-4 h-4" /></div>
-                                    <span className="text-sm font-bold text-red-600">Sign Out</span>
+                                    <div className="w-8 h-8 bg-red-50 dark:bg-red-950/40 group-hover:bg-red-100 dark:group-hover:bg-red-900/60 rounded-lg flex items-center justify-center text-red-500 dark:text-red-400 transition-colors"><LogOut className="w-4 h-4" /></div>
+                                    <span className="text-sm font-bold text-red-600 dark:text-red-400">Sign Out</span>
                                 </div>
                             </div>
                         </div>

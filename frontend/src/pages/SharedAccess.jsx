@@ -49,14 +49,14 @@ const SharedAccess = () => {
     if (!inviteId) return null;
 
     return (
-        <div className="min-h-screen bg-[#F3F7F4] flex flex-col items-center justify-center p-6">
-            <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 max-w-sm w-full text-center">
-                <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
-                    <Users className="w-8 h-8 text-green-600" />
+        <div className="min-h-screen bg-[#F3F7F4] dark:bg-slate-950 flex flex-col items-center justify-center p-6 transition-colors duration-300">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-slate-800 max-w-sm w-full text-center">
+                <div className="w-16 h-16 bg-green-50 dark:bg-green-950/40 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <Users className="w-8 h-8 text-green-600 dark:text-green-400" />
                 </div>
 
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">You're Invited!</h1>
-                <p className="text-gray-500 mb-6 leading-relaxed text-sm">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">You're Invited!</h1>
+                <p className="text-gray-500 dark:text-gray-400 mb-6 leading-relaxed text-sm">
                     Someone has invited you to collaborate on their Pantry and Shopping List.
                     Enter your name below to join!
                 </p>
@@ -67,7 +67,7 @@ const SharedAccess = () => {
                         placeholder="Your Name or Email"
                         value={guestName}
                         onChange={(e) => setGuestName(e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 focus:border-green-400 focus:bg-white focus:ring-2 focus:ring-green-100 rounded-xl px-4 py-3 text-sm text-center outline-none transition-all"
+                        className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-green-400 dark:focus:border-green-400 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900/40 rounded-xl px-4 py-3 text-sm text-center text-gray-900 dark:text-gray-100 outline-none transition-all"
                     />
                 </div>
 

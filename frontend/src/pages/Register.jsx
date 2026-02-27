@@ -55,9 +55,9 @@ const Register = () => {
 
   return (
     <AuthLayout>
-      <Card className="w-[400px] p-8 rounded-2xl shadow-lg">
+      <Card className="w-[400px] p-8 rounded-2xl shadow-lg dark:bg-slate-900 dark:border-slate-800">
         <CardContent className="space-y-6">
-          <h2 className="text-lg font-semibold text-center">
+          <h2 className="text-lg font-semibold text-center dark:text-white">
             Create Account
           </h2>
 
@@ -99,11 +99,11 @@ const Register = () => {
             </Button>
           </form>
 
-          <p className="text-sm text-center text-gray-600">
+          <p className="text-sm text-center text-gray-600 dark:text-gray-400">
             Already have an account?{" "}
             <Link
               to="/login"
-              className="text-green-600 font-medium hover:underline"
+              className="text-green-600 dark:text-green-400 font-medium hover:underline"
             >
               Login
             </Link>

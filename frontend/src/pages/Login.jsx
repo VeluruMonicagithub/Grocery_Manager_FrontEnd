@@ -63,20 +63,20 @@ const Login = () => {
 
   return (
     <AuthLayout>
-      <Card className="w-[400px] p-8 rounded-2xl shadow-lg">
+      <Card className="w-[400px] p-8 rounded-2xl shadow-lg dark:bg-slate-900 dark:border-slate-800">
         <CardContent className="space-y-6">
 
           <div className="flex flex-col items-center space-y-2">
-            <div className="bg-green-100 p-4 rounded-full">
-              <Leaf className="text-green-600" />
+            <div className="bg-green-100 dark:bg-green-950/40 p-4 rounded-full">
+              <Leaf className="text-green-600 dark:text-green-400" />
             </div>
-            <h1 className="text-xl font-semibold">My Pantry</h1>
-            <p className="text-sm text-gray-500">
+            <h1 className="text-xl font-semibold dark:text-white">My Pantry</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Organize your kitchen, reduce waste.
             </p>
           </div>
 
-          <h2 className="text-lg font-semibold">Welcome Back</h2>
+          <h2 className="text-lg font-semibold dark:text-white">Welcome Back</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -117,11 +117,11 @@ const Login = () => {
               {loading ? <Loader /> : "Sign In"}
             </Button>
           </form>
-          <p className="text-sm text-center text-gray-600">
+          <p className="text-sm text-center text-gray-600 dark:text-gray-400">
             Don’t have an account?{" "}
             <Link
               to="/register"
-              className="text-green-600 font-medium hover:underline"
+              className="text-green-600 dark:text-green-400 font-medium hover:underline"
             >
               Create an account
             </Link>

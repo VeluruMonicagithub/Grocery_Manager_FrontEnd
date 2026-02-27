@@ -217,9 +217,9 @@ const Dashboard = () => {
         return coupons.find(c => itemName.toLowerCase().includes((c.grocery_item_name || "").toLowerCase()));
     };
 
-    // Function to count offer items in a category
-    const getOfferItemsCount = (categoryName) => {
-        // Count offers from both pantry items and grocery items
+    // Function to get names of items on offer in a category
+    const getOfferItems = (categoryName) => {
+        // Find offers from both pantry items and grocery items
         const pantryItemsInCategory = (searchQuery ? filteredPantry : pantry).filter(item => item.category === categoryName);
         const groceryItemsInCategory = groceryItems.filter(item => {
             // Map grocery item sections to categories
@@ -233,10 +233,13 @@ const Dashboard = () => {
             return category === categoryName;
         });
 
-        const pantryOfferItems = pantryItemsInCategory.filter(item => getApplicableCoupon(item.name));
-        const groceryOfferItems = groceryItemsInCategory.filter(item => getApplicableCoupon(item.name));
+        const allItems = [...pantryItemsInCategory, ...groceryItemsInCategory];
+        const offerItems = allItems
+            .filter(item => getApplicableCoupon(item.name))
+            .map(item => item.name);
 
-        return pantryOfferItems.length + groceryOfferItems.length;
+        // Return unique names
+        return [...new Set(offerItems)];
     };
 
     const getDaysRemaining = (expirationDate) => {
@@ -317,7 +320,7 @@ const Dashboard = () => {
                         value={searchQuery}
                         onChange={handleSearchChange}
                         onFocus={() => searchQuery && setShowSearchResults(true)}
-                        className="w-full pl-12 pr-10 py-4 rounded-xl bg-white shadow-sm border-none focus:ring-2 focus:ring-green-100 text-gray-700"
+                        className="w-full pl-12 pr-10 py-4 rounded-xl bg-white dark:bg-slate-900 shadow-sm border-none focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 text-gray-700 dark:text-gray-200 transition-colors"
                     />
 
                     {/* Clear button */}
@@ -333,7 +336,7 @@ const Dashboard = () => {
 
                 {/* Search Results Dropdown */}
                 {showSearchResults && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-100 max-h-96 overflow-y-auto z-50">
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-gray-100 dark:border-slate-800 max-h-96 overflow-y-auto z-50">
                         {isSearching ? (
                             <div className="p-4 text-center text-gray-500 text-sm">
                                 Searching...
@@ -348,23 +351,23 @@ const Dashboard = () => {
                                     <div
                                         key={index}
                                         onClick={() => handleResultClick(result)}
-                                        className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                                        className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"
                                     >
                                         <div className="flex-shrink-0">
                                             {result.icon}
                                         </div>
                                         <div className="flex-1 min-w-0 font-medium">
-                                            <div className="font-bold text-gray-800 text-sm truncate">
+                                            <div className="font-bold text-gray-800 dark:text-gray-200 text-sm truncate">
                                                 {result.name || result.title || result.grocery_item_name}
                                             </div>
-                                            <div className="text-xs text-gray-500 truncate font-semibold">
+                                            <div className="text-xs text-gray-500 dark:text-gray-400 truncate font-semibold">
                                                 {result.description}
                                             </div>
                                             <div className="flex items-center gap-2 mt-1">
-                                                <span className="text-[10px] font-black text-gray-400 capitalize bg-gray-100 px-1.5 py-0.5 rounded">
+                                                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 capitalize bg-gray-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
                                                     {result.type}
                                                 </span>
-                                                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
+                                                <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-tight">
                                                     In {result.page === 'dashboard' ? 'Pantry' :
                                                         result.page === 'list' ? 'Shopping List' :
                                                             result.page === 'recipes' ? 'Recipes' : result.page}
@@ -385,8 +388,8 @@ const Dashboard = () => {
                 <div className="mb-10">
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex items-center gap-2">
-                            <h2 className="text-lg font-bold text-gray-800">Expiring Soon</h2>
-                            <span className="bg-orange-100 text-orange-600 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">Expiring Soon</h2>
+                            <span className="bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
                                 {expiringSoon.length} items
                             </span>
                         </div>
@@ -397,8 +400,8 @@ const Dashboard = () => {
                         {expiringSoon.map((item) => (
                             <div
                                 key={item.id}
-                                className={`p-5 rounded-[24px] shadow-sm border min-w-[140px] flex flex-col items-center flex-shrink-0 relative group transition-all ${item.daysLeft <= 0 ? 'bg-red-50 border-red-100' :
-                                    item.daysLeft <= 3 ? 'bg-orange-50 border-orange-100' : 'bg-yellow-50 border-yellow-100'
+                                className={`p-5 rounded-[24px] shadow-sm border min-w-[140px] flex flex-col items-center flex-shrink-0 relative group transition-all ${item.daysLeft <= 0 ? 'bg-red-50 dark:bg-red-950/30 border-red-100 dark:border-red-900/30' :
+                                    item.daysLeft <= 3 ? 'bg-orange-50 dark:bg-orange-950/30 border-orange-100 dark:border-orange-900/30' : 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-100 dark:border-yellow-900/30'
                                     }`}
                             >
                                 <div className={`p-2 rounded-full mb-3 ${item.daysLeft <= 0 ? 'bg-red-100' :
@@ -408,7 +411,7 @@ const Dashboard = () => {
                                         item.daysLeft <= 3 ? 'text-orange-500' : 'text-yellow-600'
                                         }`} />
                                 </div>
-                                <h3 className="font-bold text-gray-800 text-sm mb-1">{item.name}</h3>
+                                <h3 className="font-bold text-gray-800 dark:text-gray-200 text-sm mb-1">{item.name}</h3>
 
                                 <p className={`text-[11px] font-bold ${item.daysLeft <= 0 ? 'text-red-600' :
                                     item.daysLeft <= 3 ? 'text-orange-600' : 'text-yellow-700'
@@ -420,7 +423,7 @@ const Dashboard = () => {
 
                                 <button
                                     onClick={() => deleteItem(item.id)}
-                                    className="mt-3 w-full bg-white border border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200 text-[10px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
+                                    className="mt-3 w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-500 dark:text-gray-400 hover:text-red-500 hover:border-red-200 text-[10px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
                                 >
                                     Used / Removed
                                 </button>
@@ -434,10 +437,10 @@ const Dashboard = () => {
             {searchQuery.trim() && (
                 <div className="mb-10 animate-in fade-in slide-in-from-top-4 duration-300">
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-bold text-gray-800">
+                        <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">
                             Search Results for "{searchQuery}"
                         </h2>
-                        <span className="text-xs font-semibold text-gray-400">
+                        <span className="text-xs font-semibold text-gray-400 dark:text-gray-500">
                             {filteredPantry.length} items found
                         </span>
                     </div>
@@ -447,7 +450,7 @@ const Dashboard = () => {
                             {filteredPantry.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="bg-white p-5 rounded-[24px] shadow-sm border border-gray-100 min-w-[140px] flex flex-col items-center flex-shrink-0 relative group hover:border-green-200 transition-colors"
+                                    className="bg-white dark:bg-slate-900 p-5 rounded-[24px] shadow-sm border border-gray-100 dark:border-slate-800 min-w-[140px] flex flex-col items-center flex-shrink-0 relative group hover:border-green-200 dark:hover:border-green-900 transition-colors"
                                 >
                                     <button
                                         onClick={() => deleteItem(item.id)}
@@ -457,15 +460,15 @@ const Dashboard = () => {
                                         <X className="w-3 h-3" />
                                     </button>
 
-                                    <div className="bg-green-50 p-2 rounded-full mb-3">
+                                    <div className="bg-green-50 dark:bg-slate-800 p-2 rounded-full mb-3">
                                         <Package className="w-6 h-6 text-green-500" />
                                     </div>
 
-                                    <h3 className="font-bold text-gray-800 text-sm mb-1 text-center truncate w-full">{item.name}</h3>
-                                    <p className="text-[10px] text-gray-400 capitalize mb-2">{item.category}</p>
+                                    <h3 className="font-bold text-gray-800 dark:text-gray-200 text-sm mb-1 text-center truncate w-full">{item.name}</h3>
+                                    <p className="text-[10px] text-gray-400 dark:text-gray-500 capitalize mb-2">{item.category}</p>
 
                                     {item.expiration_date && (
-                                        <div className={`mb-3 px-2 py-0.5 rounded-full text-[9px] font-bold ${getDaysRemaining(item.expiration_date) <= 3 ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-500'
+                                        <div className={`mb-3 px-2 py-0.5 rounded-full text-[9px] font-bold ${getDaysRemaining(item.expiration_date) <= 3 ? 'bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400' : 'bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400'
                                             }`}>
                                             Exp: {new Date(item.expiration_date).toLocaleDateString()}
                                         </div>
@@ -474,16 +477,16 @@ const Dashboard = () => {
                                     <div className="flex items-center gap-3 mt-auto">
                                         <button
                                             onClick={() => updateQuantity(item, item.quantity - 1)}
-                                            className="w-5 h-5 flex items-center justify-center bg-gray-50 rounded hover:bg-gray-100 text-gray-600"
+                                            className="w-5 h-5 flex items-center justify-center bg-gray-50 dark:bg-slate-800 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-600 dark:text-gray-400"
                                         >
                                             -
                                         </button>
-                                        <p className="text-[10px] text-gray-600 font-bold">
+                                        <p className="text-[10px] text-gray-600 dark:text-gray-300 font-bold">
                                             {item.quantity}
                                         </p>
                                         <button
                                             onClick={() => updateQuantity(item, item.quantity + 1)}
-                                            className="w-5 h-5 flex items-center justify-center bg-gray-50 rounded hover:bg-gray-100 text-gray-600"
+                                            className="w-5 h-5 flex items-center justify-center bg-gray-50 dark:bg-slate-800 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-600 dark:text-gray-400"
                                         >
                                             +
                                         </button>
@@ -492,9 +495,9 @@ const Dashboard = () => {
                             ))}
                         </div>
                     ) : (
-                        <div className="bg-gray-50 rounded-[24px] p-8 text-center border border-dashed border-gray-200">
-                            <Search className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                            <p className="text-sm text-gray-500">No items found matching your search.</p>
+                        <div className="bg-gray-50 dark:bg-slate-900 rounded-[24px] p-8 text-center border border-dashed border-gray-200 dark:border-slate-800">
+                            <Search className="w-8 h-8 text-gray-300 dark:text-gray-700 mx-auto mb-2" />
+                            <p className="text-sm text-gray-500 dark:text-gray-400">No items found matching your search.</p>
                         </div>
                     )}
                 </div>
@@ -505,8 +508,8 @@ const Dashboard = () => {
                 <div className="mb-10">
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex items-center gap-2">
-                            <h2 className="text-lg font-bold text-gray-800">Low Stock</h2>
-                            <span className="bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">Low Stock</h2>
+                            <span className="bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
                                 {lowStock.length} items
                             </span>
                         </div>
@@ -517,7 +520,7 @@ const Dashboard = () => {
                         {lowStock.map((item) => (
                             <div
                                 key={item.id}
-                                className="bg-green-50 p-5 rounded-[24px] shadow-md border border-green-200 min-w-[140px] flex flex-col items-center flex-shrink-0 relative group"
+                                className="bg-green-50 dark:bg-slate-900 p-5 rounded-[24px] shadow-md border border-green-200 dark:border-green-900/30 min-w-[140px] flex flex-col items-center flex-shrink-0 relative group"
                             >
                                 {/* Delete Button (Visible on hover) */}
                                 <button
@@ -529,10 +532,10 @@ const Dashboard = () => {
                                 </button>
 
                                 <Milk className="w-8 h-8 text-green-500 mb-3" /> {/* Default icon, ideally mapped based on category */}
-                                <h3 className="font-bold text-gray-800 text-sm mb-1">{item.name}</h3>
+                                <h3 className="font-bold text-gray-800 dark:text-gray-200 text-sm mb-1">{item.name}</h3>
 
                                 {/* Progress Bar */}
-                                <div className="w-full bg-green-50 h-1.5 rounded-full mt-2 mb-1">
+                                <div className="w-full bg-green-50 dark:bg-slate-800 h-1.5 rounded-full mt-2 mb-1">
                                     <div
                                         className="bg-red-400 h-1.5 rounded-full"
                                         style={{
@@ -547,16 +550,16 @@ const Dashboard = () => {
                                 <div className="flex items-center gap-3 mt-1">
                                     <button
                                         onClick={() => updateQuantity(item, item.quantity - 1)}
-                                        className="w-5 h-5 flex flex-col items-center justify-center bg-gray-100 rounded hover:bg-gray-200 text-gray-600 font-medium pb-0.5 leading-none"
+                                        className="w-5 h-5 flex flex-col items-center justify-center bg-gray-100 dark:bg-slate-800 rounded hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-600 dark:text-gray-400 font-medium pb-0.5 leading-none"
                                     >
                                         -
                                     </button>
-                                    <p className="text-[10px] text-gray-400 font-medium">
+                                    <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">
                                         {item.quantity} {item.unit} left
                                     </p>
                                     <button
                                         onClick={() => updateQuantity(item, item.quantity + 1)}
-                                        className="w-5 h-5 flex flex-col items-center justify-center bg-gray-100 rounded hover:bg-gray-200 text-gray-600 font-medium pb-0.5 leading-none"
+                                        className="w-5 h-5 flex flex-col items-center justify-center bg-gray-100 dark:bg-slate-800 rounded hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-600 dark:text-gray-400 font-medium pb-0.5 leading-none"
                                     >
                                         +
                                     </button>
@@ -571,13 +574,13 @@ const Dashboard = () => {
                                         onFocus={() => handlePriceFocus(item)}
                                         onChange={(e) => setItemPrices({ ...itemPrices, [item.id]: e.target.value })}
                                         disabled={estimatingItems[item.id]}
-                                        className={`w-full pl-6 pr-2 py-1.5 text-[11px] font-bold border border-green-200 rounded-lg outline-none focus:border-green-400 focus:ring-1 focus:ring-green-100 placeholder:font-medium text-center ${estimatingItems[item.id] ? 'animate-pulse bg-gray-50' : ''}`}
+                                        className={`w-full pl-6 pr-2 py-1.5 text-[11px] font-bold border border-green-200 dark:border-green-900/50 bg-white dark:bg-slate-800 rounded-lg outline-none focus:border-green-400 dark:focus:border-green-700 focus:ring-1 focus:ring-green-100 dark:focus:ring-green-900 placeholder:font-medium text-center text-gray-800 dark:text-gray-200 ${estimatingItems[item.id] ? 'animate-pulse bg-gray-50 dark:bg-slate-800' : ''}`}
                                     />
                                 </div>
 
                                 <button
                                     onClick={() => addToShoppingList(item)}
-                                    className="mt-2 w-full bg-white border border-green-200 text-green-600 hover:bg-green-50 text-[10px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
+                                    className="mt-2 w-full bg-white dark:bg-slate-900 border border-green-200 dark:border-green-900/50 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-slate-800 text-[10px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
                                 >
                                     <ShoppingBag className="w-3 h-3" />
                                     To List
@@ -591,10 +594,11 @@ const Dashboard = () => {
             {/* Virtual Pantry Categories */}
             <div>
                 <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-                    <h2 className="text-lg font-semibold">
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                         Virtual Pantry
                     </h2>
                     <div className="flex items-center gap-2">
+
                         <button
                             onClick={() => setOpenModal(true)}
                             className="bg-green-600 border border-green-600 hover:bg-green-700 text-white transition-colors px-4 py-2 rounded-xl shadow-sm text-sm font-bold flex items-center gap-2"
@@ -604,7 +608,7 @@ const Dashboard = () => {
                         </button>
                         <button
                             onClick={() => setOpenUsageModal(true)}
-                            className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors px-4 py-2 rounded-xl shadow-sm text-sm font-bold flex items-center gap-2"
+                            className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-colors px-4 py-2 rounded-xl shadow-sm text-sm font-bold flex items-center gap-2"
                         >
                             <Minus className="w-4 h-4" />
                             Log Usage
@@ -615,22 +619,22 @@ const Dashboard = () => {
                 <div className="grid grid-cols-2 gap-4">
                     {categories.map((cat) => {
                         const itemsInCategory = (searchQuery ? filteredPantry : pantry).filter(item => item.category === cat.name);
-                        const offerCount = getOfferItemsCount(cat.name);
+                        const offerItems = getOfferItems(cat.name);
                         return (
                             <div
                                 key={cat.name}
-                                className="bg-green-50 p-6 rounded-[24px] shadow-md border border-green-200 flex flex-col items-center justify-center min-h-[120px]"
+                                className="bg-green-50 dark:bg-slate-900 p-6 rounded-[24px] shadow-md border border-green-200 dark:border-green-900/30 flex flex-col items-center justify-center min-h-[120px]"
                             >
                                 {cat.icon}
-                                <h3 className="font-bold text-gray-800 text-sm">{cat.name}</h3>
+                                <h3 className="font-bold text-gray-800 dark:text-gray-200 text-sm">{cat.name}</h3>
                                 {itemsInCategory.length > 0 && (
-                                    <div className="mt-2 text-xs text-gray-400">
+                                    <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
                                         {itemsInCategory.length} items
                                     </div>
                                 )}
-                                {offerCount > 0 && (
-                                    <div className="mt-1 text-xs font-bold text-orange-600">
-                                        {offerCount} offer{offerCount > 1 ? 's' : ''} available
+                                {offerItems.length > 0 && (
+                                    <div className="mt-1 text-[11px] font-bold text-orange-600 dark:text-orange-400 text-center">
+                                        {offerItems.length} product{offerItems.length > 1 ? 's' : ''} are in offer
                                     </div>
                                 )}
                             </div>
@@ -647,13 +651,15 @@ const Dashboard = () => {
                 onSuccess={fetchPantry}
             />
 
+
+
             <UsageModal
                 open={openUsageModal}
                 onClose={() => setOpenUsageModal(false)}
                 onSuccess={fetchPantry}
                 pantry={pantry}
             />
-        </DashboardLayout>
+        </DashboardLayout >
     );
 };
 

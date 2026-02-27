@@ -50,11 +50,11 @@ const AIChefModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4 bg-black/40 backdrop-blur-sm">
-            <div className="bg-white w-full h-[85vh] sm:h-auto sm:max-h-[600px] sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-5">
+        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4 bg-black/40 backdrop-blur-sm transition-all duration-300">
+            <div className="bg-white dark:bg-slate-900 w-full h-[85vh] sm:h-auto sm:max-h-[600px] sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border dark:border-slate-800 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5">
 
                 {/* Header */}
-                <div className="bg-green-600 px-5 py-4 flex justify-between items-center text-white shrink-0">
+                <div className="bg-green-600 dark:bg-green-700 px-5 py-4 flex justify-between items-center text-white shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="bg-white/20 p-2 rounded-full">
                             <Bot className="w-6 h-6" />
@@ -70,18 +70,18 @@ const AIChefModal = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Chat Area */}
-                <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-gray-50/50 relative">
+                <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-gray-50/50 dark:bg-slate-950/50 relative">
                     {messages.map((msg, idx) => (
                         <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                             {/* Avatar */}
-                            <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-sm ${msg.role === 'user' ? 'bg-gray-200' : 'bg-green-100 text-green-700'}`}>
-                                {msg.role === 'user' ? <UserIcon className="w-4 h-4 text-gray-500" /> : <Bot className="w-4 h-4" />}
+                            <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-sm ${msg.role === 'user' ? 'bg-gray-200 dark:bg-slate-800' : 'bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400'}`}>
+                                {msg.role === 'user' ? <UserIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" /> : <Bot className="w-4 h-4" />}
                             </div>
 
                             {/* Message Bubble */}
                             <div className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed shadow-sm ${msg.role === 'user'
-                                    ? 'bg-green-500 text-white rounded-tr-sm'
-                                    : 'bg-white text-gray-800 border border-gray-100 rounded-tl-sm'
+                                ? 'bg-green-500 text-white rounded-tr-sm'
+                                : 'bg-white dark:bg-slate-800 text-gray-800 dark:text-gray-200 border border-gray-100 dark:border-slate-700 rounded-tl-sm'
                                 }`}>
                                 {/* Simple formatting for Markdown/Newlines if needed, for now just standard text */}
                                 <div style={{ whiteSpace: "pre-wrap" }}>{msg.text}</div>
@@ -91,12 +91,12 @@ const AIChefModal = ({ isOpen, onClose }) => {
 
                     {isLoading && (
                         <div className="flex gap-3">
-                            <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-green-100 text-green-700 shadow-sm">
+                            <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400 shadow-sm">
                                 <Bot className="w-4 h-4" />
                             </div>
-                            <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm border border-gray-100 shadow-sm flex items-center gap-2">
+                            <div className="bg-white dark:bg-slate-800 px-4 py-3 rounded-2xl rounded-tl-sm border border-gray-100 dark:border-slate-700 shadow-sm flex items-center gap-2">
                                 <Loader2 className="w-4 h-4 animate-spin text-green-500" />
-                                <span className="text-sm text-gray-500">Chef is typing...</span>
+                                <span className="text-sm text-gray-500 dark:text-gray-400">Chef is typing...</span>
                             </div>
                         </div>
                     )}
@@ -104,7 +104,7 @@ const AIChefModal = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Input Area */}
-                <div className="p-4 bg-white border-t border-gray-100 shrink-0">
+                <div className="p-4 bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800 shrink-0">
                     <div className="flex gap-2 relative">
                         <input
                             type="text"
@@ -112,7 +112,7 @@ const AIChefModal = ({ isOpen, onClose }) => {
                             value={inputQuery}
                             onChange={e => setInputQuery(e.target.value)}
                             onKeyDown={e => e.key === 'Enter' && handleSend()}
-                            className="flex-1 bg-gray-100 border-none rounded-2xl pl-4 pr-12 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:bg-white transition-all outline-none"
+                            className="flex-1 bg-gray-100 dark:bg-slate-800 border-none rounded-2xl pl-4 pr-12 py-3 text-sm text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 focus:bg-white dark:focus:bg-slate-800 transition-all outline-none"
                         />
                         <button
                             onClick={handleSend}
