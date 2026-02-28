@@ -194,8 +194,10 @@ const ShoppingList = () => {
 
             toast.success(`Check-out Complete! ${completed} items logged into Pantry.`);
 
-            // Usually, here you would delete the checked items or reset the list
-            // For now we will just re-fetch
+            // Reset budget and clear checked items on the backend
+            await API.delete("/grocery/clear");
+
+            // Re-fetch to update the UI
             fetchItems();
         } catch (err) {
             console.error("Error saving trip:", err);
