@@ -3,9 +3,9 @@
 My Pantry is a state-of-the-art, full-stack application designed to revolutionize how households manage their food inventory, plan meals, and reduce waste. By combining real-time inventory tracking with Generative AI, My Pantry turns a simple list into an intelligent kitchen assistant.
 
 ## Deployed Links
-*   **Live Application**: [Click here to view the App](DEPLOYMENT_LINK_HERE)
-*   **Backend API**: [View API Service](BACKEND_API_LINK_HERE)
-*   **Video Demo**: [Watch the Walkthrough](VIDEO_LINK_HERE)
+*   **Live Application**: [https://manageyourpantry.netlify.app/](https://manageyourpantry.netlify.app/)
+*   **Backend API**: [https://grocery-manager-backend.onrender.com/api](https://grocery-manager-backend.onrender.com/api)
+*   **Video Demo**: [https://drive.google.com/file/d/1FB9vrtzQGWKTTHCxLoSg1LFypjGk6ppC/view?usp=sharing](https://drive.google.com/file/d/1FB9vrtzQGWKTTHCxLoSg1LFypjGk6ppC/view?usp=sharing)
 
 ##  Test Credentials
 *   **Email**: `test@example.com`
@@ -13,24 +13,19 @@ My Pantry is a state-of-the-art, full-stack application designed to revolutioniz
 
 ---
 
-##  Features
+## Features Implemented
 
-###  Intelligent Inventory & Shopping
-*   **Smart Pantry**: Real-time tracking of quantities, units, and categories with automated low-stock detection.
-*   **Dynamic Shopping List**: One-click "Add to List" for low-stock items with automatic pantry sync upon trip completion.
-*   **Budget Guard**: Set monthly budget limits and track spending in real-time with visual indicators.
-
-###  AI-Powered Kitchen Assistant
-*   **AI Chef**: A conversational bot (powered by Gemini) that knows your pantry and suggests recipes based on your specific ingredients.
-*   **Smart Estimation**: AI-driven price estimation for groceries and nutritional analysis for recipes.
-
-###  Household Collaboration
-*   **Shared Access**: Generate secure invite links for family members to manage a single shared pantry in real-time.
-*   **Guest Mode**: Instant-access sharing for temporary household guests.
-
-###  Health & Spending Analytics
-*   **Visual Insights**: Beautifully rendered charts showing spending trends and nutritional intake (Calories, Protein, Carbs, Fat).
-*   **Expiration Alerts**: Automated tracking and alerts for items expiring within 7 days.
+*   **Smart List Creation & Organization:** Automatically categorizes shopping list items by store sections (e.g., Produce, Dairy, Grains) to ensure highly efficient, layout-optimized grocery runs.
+*   **Context-Aware Recipe Engine:** Suggests actionable recipes by cross-referencing user dietary preferences (e.g., vegetarian, gluten-free) with real-time pantry inventory, maximizing ingredient utilization and minimizing food waste.
+*   **Real-Time Collaborative Lists:** Powered by WebSockets, allows multiple household members to simultaneously add, edit, or check off items on a unified grocery list with zero lag.
+*   **AI Price Estimation & Live Budgeting:** Integrates generative AI to estimate item costs on the fly, paired with a dynamic visual budget bar that warns users before they exceed their defined financial limits.
+*   **Store Deal & Coupon Integration:** Automatically surfaces relevant store deals and applies percentage-based discounts to grocery items, ensuring the most cost-effective shopping trips.
+*   **Virtual Pantry & Inventory Tracking:** Maintains a persistent ledger of household ingredients. Automatically detects low-stock items based on user-defined thresholds and provides 1-click conversion to the shopping list.
+*   **Dedicated Shopping Mode:** A streamlined, distraction-free mobile UI designed for in-store use. Features oversized tap targets, real-time cost accumulation, and one-click "Log Trip" functionality.
+*   **Meal Planning & Scheduling:** Allows users to log prepared meals from recipes, which strictly updates inventory consumption and accurately tallies tracking nutritional intakes.
+*   **Expiration Date Tracking:** Actively monitors perishable items, prominently alerting users to items set to expire within 7 days in varying alert colors to reduce household food waste.
+*   **Comprehensive Health & Nutrition Tracking:** Leverages AI to estimate macros (Calories, Protein, Carbs, Fat) for grocery purchases, visualizing aggregate nutritional intake within the Analytics dashboard.
+*   **Shopping History & Trend Analytics:** Logs every completed checkout trip to provide historical insights, rendering beautiful SVG pie charts and progress bars to illustrate spending patterns and category breakdowns over time.
 
 ---
 
@@ -79,5 +74,18 @@ My Pantry is a state-of-the-art, full-stack application designed to revolutioniz
 ---
 
 ##  Screenshots
-![Dashboard Preview]()
-![AI Chef Preview]()
+
+![Login](./public/screenshots/Login.png)
+![Dashboard](./public/screenshots/Dashboard.png)
+![listPlanningMode](./public/screenshots/ListPlanningMode.png)
+![listShoppingMode](./public/screenshots/ListShoppingMode.png)
+![RecipesPlanning](./public/screenshots/RecipesPlanning.png)
+![WeeklyMealPlanning](./public/screenshots/WeeklyMealPlanner.png)
+![AIChefIntegration](./public/screenshots/AIChefIntegration.png)
+![SharingHub](./public/screenshots/SharingHub.png)
+![Account](./public/screenshots/Account.png)
+
+---
+
+## Video Walkthrough
+[https://drive.google.com/file/d/1FB9vrtzQGWKTTHCxLoSg1LFypjGk6ppC/view?usp=sharing](https://drive.google.com/file/d/1FB9vrtzQGWKTTHCxLoSg1LFypjGk6ppC/view?usp=sharing)
