@@ -47,25 +47,25 @@ const UsageModal = ({ open, onClose, onSuccess, pantry }) => {
 
     return (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-2xl w-[90%] md:w-[400px]">
-                <h2 className="text-lg font-semibold mb-4 text-gray-800">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl w-[90%] md:w-[400px] border border-transparent dark:border-slate-800">
+                <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
                     Log Usage
                 </h2>
-                <p className="text-xs text-gray-500 mb-4">Select an item you just used to update your pantry stock.</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">Select an item you just used to update your pantry stock.</p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <select
-                        className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-700"
+                        className="w-full p-3 border border-gray-200 dark:border-slate-700 rounded-xl bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-gray-100 outline-none focus:ring-2 focus:ring-green-500/20"
                         value={selectedItem}
                         onChange={(e) => setSelectedItem(e.target.value)}
                         required
                     >
-                        <option value="" disabled>Select an item</option>
+                        <option value="" disabled className="dark:bg-slate-900">Select an item</option>
                         {pantry.length === 0 ? (
-                            <option value="" disabled>Pantry is empty</option>
+                            <option value="" disabled className="dark:bg-slate-900">Pantry is empty</option>
                         ) : (
                             pantry.map((item) => (
-                                <option key={item.id} value={item.id}>
+                                <option key={item.id} value={item.id} className="dark:bg-slate-900">
                                     {item.name} (Current: {item.quantity} {item.unit})
                                 </option>
                             ))
@@ -77,7 +77,7 @@ const UsageModal = ({ open, onClose, onSuccess, pantry }) => {
                         type="number"
                         min="0.1"
                         step="0.1"
-                        className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-700"
+                        className="w-full p-3 border border-gray-200 dark:border-slate-700 rounded-xl bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-gray-100 outline-none focus:ring-2 focus:ring-green-500/20"
                         value={usedQty}
                         onChange={(e) => setUsedQty(e.target.value)}
                         required
@@ -102,7 +102,7 @@ const UsageModal = ({ open, onClose, onSuccess, pantry }) => {
                                     toast.error("Failed to remove item");
                                 }
                             }}
-                            className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors"
+                            className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium transition-colors"
                         >
                             Remove Completely
                         </button>
@@ -111,14 +111,14 @@ const UsageModal = ({ open, onClose, onSuccess, pantry }) => {
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="px-4 py-2 text-gray-500 font-medium hover:bg-gray-100 rounded-lg transition-colors"
+                                className="px-4 py-2 text-gray-500 dark:text-gray-400 font-medium hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                             >
                                 Cancel
                             </button>
 
                             <button
                                 type="submit"
-                                className="bg-[#A4DEB8] hover:bg-[#8CCB9F] text-gray-800 font-bold px-5 py-2 rounded-xl transition-colors"
+                                className="bg-[#A4DEB8] dark:bg-green-600 hover:bg-[#8CCB9F] dark:hover:bg-green-700 text-gray-800 dark:text-white font-bold px-5 py-2 rounded-xl transition-colors shadow-sm"
                             >
                                 Update
                             </button>

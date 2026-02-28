@@ -39,7 +39,7 @@ function App() {
               <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
             </Routes>
           </BrowserRouter>
-          <ToastContainer position="top-right" autoClose={3000} />
+          <ToastContainer position="top-center" autoClose={3000} />
         </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>

@@ -61,13 +61,13 @@ const Recipes = () => {
         }
     };
 
-    const toggleRecipeDetails = async (id) => {
-        if (expandedId === id) {
+    const toggleRecipeDetails = async (id, instanceKey) => {
+        if (expandedId === instanceKey) {
             setExpandedId(null);
             return;
         }
 
-        setExpandedId(id);
+        setExpandedId(instanceKey);
 
         // Fetch detailed ingredients if we haven't already
         if (!recipeDetails[id]) {
@@ -406,7 +406,7 @@ const Recipes = () => {
                         <p className="text-xs text-gray-300 mt-2">Check back later or add some via Supabase Admin.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
                         {recipes.filter(r => {
                             // Search Filter
                             const matchesSearch = r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -433,27 +433,28 @@ const Recipes = () => {
                             }
 
                             return true;
-                        }).map((recipe) => {
+                        }).map((recipe, i) => {
                             // New format may not use |||IMAGE: hack, safely fallback
                             const descParts = (recipe.description || "").split("|||IMAGE:");
                             const cleanDesc = descParts[0];
                             const imageUrl = descParts[1] || null;
+                            const instanceKey = `${recipe.id}-${i}`;
 
                             return (
-                                <div key={recipe.id} className="bg-white dark:bg-slate-900 rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-slate-800 overflow-hidden transition-all h-full flex flex-col">
+                                <div key={instanceKey} className="bg-white dark:bg-slate-900 rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-slate-800 overflow-hidden transition-all flex flex-col">
                                     {/* Recipe Image Banner */}
                                     {imageUrl && (
                                         <div
                                             className="w-full h-48 bg-gray-200 dark:bg-slate-800 bg-cover bg-center"
                                             style={{ backgroundImage: `url(${imageUrl})` }}
-                                            onClick={() => toggleRecipeDetails(recipe.id)}
+                                            onClick={() => toggleRecipeDetails(recipe.id, instanceKey)}
                                         />
                                     )}
 
                                     {/* Recipe Header Card */}
                                     <div
                                         className={`p-5 cursor-pointer hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors flex-1 flex flex-col ${recipe.matchPercentage === 100 ? 'bg-green-50/40 dark:bg-green-950/20 border-l-4 border-l-green-500' : ''}`}
-                                        onClick={() => toggleRecipeDetails(recipe.id)}
+                                        onClick={() => toggleRecipeDetails(recipe.id, instanceKey)}
                                     >
                                         <div className="flex justify-between items-start mb-2">
                                             <div>
@@ -507,7 +508,7 @@ const Recipes = () => {
                                     </div>
 
                                     {/* Expanded Details Form (Ingredients & Plan) */}
-                                    {expandedId === recipe.id && (
+                                    {expandedId === instanceKey && (
                                         <div className="bg-gray-50 dark:bg-slate-900/50 border-t border-gray-100 dark:border-slate-800 p-5 pb-6">
                                             <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Required Ingredients</h3>
 
