@@ -167,8 +167,38 @@ const ShoppingList = () => {
         const estimatedTotal = completedItems.reduce((acc, current) => acc + getDiscountedPrice(current), 0);
         const totalEstimatedAll = items.reduce((acc, current) => acc + getDiscountedPrice(current), 0);
 
+        // Calculate category and nutrition breakdown for history
+        const tripCategories = { "Produce": 0, "Snacks": 0, "Dairy & Other": 0 };
+        const tripNutrition = { calories: 0, protein: 0, carbs: 0, fat: 0 };
+
+        completedItems.forEach(item => {
+            const qty = Number(item.quantity) || 1;
+            const price = getDiscountedPrice(item);
+            const itemTotal = price * qty;
+
+            // Category logic matches backend organizer
+            const section = item.section?.toLowerCase() || "";
+            if (section.includes("produce") || section.includes("veg") || section.includes("fruit")) {
+                tripCategories["Produce"] += itemTotal;
+            } else if (section.includes("snack") || section.includes("sweet")) {
+                tripCategories["Snacks"] += itemTotal;
+            } else {
+                tripCategories["Dairy & Other"] += itemTotal;
+            }
+
+            // Nutrition
+            tripNutrition.calories += (item.calories || 0) * qty;
+            tripNutrition.protein += (item.protein || 0) * qty;
+            tripNutrition.carbs += (item.carbs || 0) * qty;
+            tripNutrition.fat += (item.fat || 0) * qty;
+        });
+
+        const categoriesPayload = Object.keys(tripCategories)
+            .map(name => ({ name, amount: tripCategories[name] }))
+            .filter(c => c.amount > 0);
+
         try {
-            // Assume we are using the first list_id available, since we haven't implemented multi-list selection yet
+            // Assume we are using the first list_id available
             const listId = completedItems[0]?.list_id;
 
             if (!listId) {
@@ -176,10 +206,12 @@ const ShoppingList = () => {
                 return;
             }
 
-            // Post to history API
+            // Post to history API with breakdown
             await API.post("/history", {
                 list_id: listId,
-                total_spent: estimatedTotal
+                total_spent: estimatedTotal,
+                categories: categoriesPayload,
+                nutrition: tripNutrition
             });
 
             // Restock synced checkoff items into the planning pantry
